@@ -1,4 +1,4 @@
-package com.example.gametech
+package com.g.machado.gametech
 
 import android.os.Bundle
 
