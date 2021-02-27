@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gametech/models/game.dart';
+import 'package:gametech/screens/filter_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ListScreen extends StatefulWidget {
+  static const routeName = '/list';
+
   @override
   _ListScreenState createState() => _ListScreenState();
 }
@@ -26,26 +29,30 @@ class _ListScreenState extends State<ListScreen> {
       body: FutureBuilder<List<Game>>(
         future: futureGames,
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasData) {
             return GamesList(snapshot.data);
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
-
-          return Center(
-            child: CircularProgressIndicator(),
-          );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: doFilter,
+        child: Icon(Icons.filter_list),
       ),
     );
   }
 
-  Future<List<Game>> fetchGames() async {
+  Future<List<Game>> fetchGames({filter: ''}) async {
     final apiKey = '925e2f4bd14e8305dd5ee8fc765d0294d64120a3';
-    final sort = 'date_added:desc';
+    final sort = 'original_release_date:desc';
     final fields = 'name,deck,image';
     final url =
-        'https://www.giantbomb.com/api/games/?api_key=$apiKey&format=json&sort=$sort&field_list=$fields';
+        'https://www.giantbomb.com/api/games/?api_key=$apiKey&format=json&sort=$sort&field_list=$fields&filter=$filter';
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -58,6 +65,13 @@ class _ListScreenState extends State<ListScreen> {
     } else {
       throw Exception('Failed to load games');
     }
+  }
+
+  void doFilter() async {
+    final filter = await Navigator.of(context).pushNamed(FilterScreen.routeName);
+    setState(() {
+      futureGames = fetchGames(filter: filter);
+    });
   }
 }
 
@@ -87,10 +101,15 @@ class GameTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text('${game.name}'),
-      subtitle: Text('${game.deck}'),
-      leading: Image.network('${game.imageIcon}'),
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: Text('${game.name}'),
+          subtitle: Text('${game.deck}'),
+          leading: Image.network('${game.imageIcon}'),
+        ),
+        Divider(),
+      ],
     );
   }
 }

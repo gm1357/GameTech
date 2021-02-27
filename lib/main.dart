@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gametech/screens/filter_screen.dart';
 import 'package:gametech/screens/list_screen.dart';
 
 void main() => runApp(MyApp());
@@ -10,9 +11,13 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
       ),
-      home: ListScreen(),
+      routes: {
+        '/': (context) => ListScreen(),
+        ListScreen.routeName: (context) => ListScreen(),
+        FilterScreen.routeName: (context) => FilterScreen()
+      },
     );
   }
 }
