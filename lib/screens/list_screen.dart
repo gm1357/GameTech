@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gametech/models/filters.dart';
 import 'package:gametech/models/game.dart';
 import 'package:gametech/screens/filter_screen.dart';
 import 'package:http/http.dart' as http;
@@ -13,11 +14,13 @@ class ListScreen extends StatefulWidget {
 
 class _ListScreenState extends State<ListScreen> {
   Future<List<Game>> futureGames;
+  Filters filters;
 
   @override
   void initState() {
     super.initState();
     futureGames = fetchGames();
+    this.filters = new Filters(name: '');
   }
 
   @override
@@ -29,15 +32,18 @@ class _ListScreenState extends State<ListScreen> {
       body: FutureBuilder<List<Game>>(
         future: futureGames,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasData) {
+          if (snapshot.hasData &&
+              snapshot.connectionState != ConnectionState.waiting) {
             return GamesList(snapshot.data);
           } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
+            return Center(
+              child: Text('${snapshot.error}'),
+            );
           }
+
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -47,12 +53,12 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
 
-  Future<List<Game>> fetchGames({filter: ''}) async {
+  Future<List<Game>> fetchGames({filters: ''}) async {
     final apiKey = '925e2f4bd14e8305dd5ee8fc765d0294d64120a3';
     final sort = 'original_release_date:desc';
     final fields = 'name,deck,image';
     final url =
-        'https://www.giantbomb.com/api/games/?api_key=$apiKey&format=json&sort=$sort&field_list=$fields&filter=$filter';
+        'https://www.giantbomb.com/api/games/?api_key=$apiKey&format=json&sort=$sort&field_list=$fields&filter=$filters';
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -68,9 +74,13 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   void doFilter() async {
-    final filter = await Navigator.of(context).pushNamed(FilterScreen.routeName);
+    final filters =
+        await Navigator.of(context).pushNamed(FilterScreen.routeName, arguments: this.filters);
+    this.filters = filters;
+    final filterString = 'name:${this.filters.name}';
+    print(filterString);
     setState(() {
-      futureGames = fetchGames(filter: filter);
+      futureGames = fetchGames(filters: filterString);
     });
   }
 }
@@ -83,10 +93,14 @@ class GamesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: ListView.builder(
-        itemCount: games.length,
-        itemBuilder: (context, index) => GameTile(games[index]),
-      ),
+      child: games.isNotEmpty
+          ? ListView.builder(
+              itemCount: games.length,
+              itemBuilder: (context, index) => GameTile(games[index]),
+            )
+          : Center(
+              child: Text('No results :(\nTry different fields'),
+            ),
     );
   }
 }

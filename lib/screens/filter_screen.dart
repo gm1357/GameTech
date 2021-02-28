@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gametech/models/filters.dart';
 
 class FilterScreen extends StatelessWidget {
   static const routeName = '/filters';
@@ -7,6 +8,8 @@ class FilterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Filters filters = ModalRoute.of(context).settings.arguments;
+    _nameController.text = filters.name;
     return Scaffold(
       appBar: AppBar(
         title: Text('Filters'),
@@ -23,7 +26,7 @@ class FilterScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pop('name:${_nameController.text}'),
+        onPressed: () => Navigator.of(context).pop(Filters(name: _nameController.text)),
         child: Icon(Icons.filter_list),
       ),
     );
