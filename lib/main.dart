@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gametech/screens/details_screen.dart';
 import 'package:gametech/screens/filter_screen.dart';
 import 'package:gametech/screens/list_screen.dart';
 
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => ListScreen(),
         ListScreen.routeName: (context) => ListScreen(),
-        FilterScreen.routeName: (context) => FilterScreen()
+        FilterScreen.routeName: (context) => FilterScreen(),
+        DetailsScreen.routeName: (context) => DetailsScreen(),
       },
     );
   }
