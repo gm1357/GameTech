@@ -5,6 +5,7 @@ import 'package:gametech/screens/details_screen.dart';
 import 'package:gametech/screens/filter_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ListScreen extends StatefulWidget {
   static const routeName = '/list';
@@ -55,11 +56,10 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Future<List<Game>> fetchGames({filters: ''}) async {
-    final apiKey = '925e2f4bd14e8305dd5ee8fc765d0294d64120a3';
     final sort = 'original_release_date:desc';
     final fields = 'name,deck,image,description';
     final url =
-        'https://www.giantbomb.com/api/games/?api_key=$apiKey&format=json&sort=$sort&field_list=$fields&filter=$filters';
+        'https://www.giantbomb.com/api/games/?api_key=${env['API_KEY']}&format=json&sort=$sort&field_list=$fields&filter=$filters';
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
