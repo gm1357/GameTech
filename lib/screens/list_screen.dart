@@ -118,19 +118,28 @@ class GameTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        ListTile(
-          title: Text('${game.name}'),
-          subtitle: Text('${game.deck}'),
-          leading: Hero(
-            child: Container(
-              width: 50,
-              height: 50,
-              child: Image.network('${game.imageDetail}', fit: BoxFit.cover,),
+        Tooltip(
+          message: '${game.name}',
+          child: ListTile(
+            title: Text(
+              '${game.name}',
+              overflow: TextOverflow.ellipsis,
             ),
-            tag: '${game.name}-cover',
+            subtitle: Text('${game.deck}'),
+            leading: Hero(
+              child: Container(
+                width: 50,
+                height: 50,
+                child: Image.network(
+                  '${game.imageDetail}',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              tag: '${game.name}-cover',
+            ),
+            onTap: () => Navigator.of(context)
+                .pushNamed(DetailsScreen.routeName, arguments: game),
           ),
-          onTap: () => Navigator.of(context)
-              .pushNamed(DetailsScreen.routeName, arguments: game),
         ),
         Divider(),
       ],
