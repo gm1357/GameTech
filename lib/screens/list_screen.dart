@@ -6,6 +6,7 @@ import 'package:gametech/screens/filter_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
 
 class ListScreen extends StatefulWidget {
   static const routeName = '/list';
@@ -21,8 +22,13 @@ class _ListScreenState extends State<ListScreen> {
   @override
   void initState() {
     super.initState();
-    futureGames = fetchGames();
-    this.filters = new Filters(name: '');
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    this.filters = new Filters(
+      name: '',
+      fromDate: formatter.format(DateTime.now().subtract(Duration(days: 365))),
+      toDate: formatter.format(DateTime.now()),
+    );
+    futureGames = fetchGames(filters: _getFilterString(this.filters));
   }
 
   @override
@@ -77,12 +83,17 @@ class _ListScreenState extends State<ListScreen> {
   void doFilter() async {
     final filters = await Navigator.of(context)
         .pushNamed(FilterScreen.routeName, arguments: this.filters);
-    this.filters = filters;
-    final filterString = 'name:${this.filters.name}';
+    if (filters != null) {
+      this.filters = filters;
 
-    setState(() {
-      futureGames = fetchGames(filters: filterString);
-    });
+      setState(() {
+        futureGames = fetchGames(filters: _getFilterString(filters));
+      });
+    }
+  }
+
+  String _getFilterString(Filters filters) {
+    return 'name:${this.filters.name},original_release_date:${filters.fromDate}|${filters.toDate}';
   }
 }
 
@@ -100,7 +111,7 @@ class GamesList extends StatelessWidget {
               itemBuilder: (context, index) => GameTile(games[index]),
             )
           : Center(
-              child: Text('No results :(\nTry different fields'),
+              child: Text('No results :(\nTry different fielters'),
             ),
     );
   }
