@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gametech/models/filters.dart';
 import 'package:gametech/models/gameSummary.dart';
-import 'package:gametech/screens/details_screen.dart';
 import 'package:gametech/screens/filter_screen.dart';
+import 'package:gametech/widgets/GameList.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -94,66 +94,5 @@ class _ListScreenState extends State<ListScreen> {
 
   String _getFilterString(Filters filters) {
     return 'name:${this.filters.name},original_release_date:${filters.fromDate}|${filters.toDate}';
-  }
-}
-
-class GamesList extends StatelessWidget {
-  final List<GameSummary> games;
-
-  const GamesList(this.games, {Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: games.isNotEmpty
-          ? ListView.builder(
-              itemCount: games.length,
-              itemBuilder: (context, index) => GameTile(games[index]),
-            )
-          : Center(
-              child: Text('No results :(\nTry different fielters'),
-            ),
-    );
-  }
-}
-
-class GameTile extends StatelessWidget {
-  final GameSummary game;
-
-  const GameTile(
-    this.game, {
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Tooltip(
-          message: '${game.name}',
-          child: ListTile(
-            title: Text(
-              '${game.name}',
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: Text('${game.deck}'),
-            leading: Hero(
-              child: Container(
-                width: 50,
-                height: 50,
-                child: Image.network(
-                  '${game.cover}',
-                  fit: BoxFit.cover,
-                ),
-              ),
-              tag: '${game.name}-cover',
-            ),
-            onTap: () => Navigator.of(context)
-                .pushNamed(DetailsScreen.routeName, arguments: game),
-          ),
-        ),
-        Divider(),
-      ],
-    );
   }
 }

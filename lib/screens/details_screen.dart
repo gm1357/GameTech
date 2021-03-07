@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gametech/models/gameDetail.dart';
 import 'package:gametech/models/gameSummary.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:gametech/widgets/GameDescription.dart';
+import 'package:gametech/widgets/GameGallery.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -113,75 +113,6 @@ class _DetailsScreenState extends State<DetailsScreen>
           }).toList(),
         ),
       ),
-    );
-  }
-}
-
-class GameDescription extends StatelessWidget {
-  final GameSummary game;
-
-  GameDescription(this.game);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        game.description != null
-            ? Html(
-                data: '${game.description}',
-                onLinkTap: (String relativePath) async =>
-                    await _launchURL('https://www.giantbomb.com$relativePath'))
-            : Text('${game.deck}'),
-      ],
-    );
-  }
-
-  _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-}
-
-class GameGallery extends StatelessWidget {
-  final Future<GameDetail> futureGameDetails;
-
-  GameGallery(this.futureGameDetails);
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: futureGameDetails,
-      builder: (context, snapshot) {
-        if (snapshot.hasData &&
-            snapshot.connectionState != ConnectionState.waiting) {
-          return SingleChildScrollView(
-            child: GridView.count(
-              padding: const EdgeInsets.all(20),
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20,
-              crossAxisCount: 2,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: ScrollPhysics(),
-              children: snapshot.data.images
-                  .map((imageUrl) => Image.network(imageUrl, fit: BoxFit.cover,))
-                  .toList()
-                  .cast<Widget>(),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('${snapshot.error}'),
-          );
-        }
-
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      },
     );
   }
 }
