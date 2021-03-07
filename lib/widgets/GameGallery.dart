@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gametech/models/gameDetail.dart';
+import 'package:gametech/widgets/ImageDialog.dart';
 
 class GameGallery extends StatelessWidget {
   final Future<GameDetail> futureGameDetails;
@@ -23,7 +24,17 @@ class GameGallery extends StatelessWidget {
               shrinkWrap: true,
               physics: ScrollPhysics(),
               children: snapshot.data.images
-                  .map((imageUrl) => Image.network(imageUrl, fit: BoxFit.cover,))
+                  .map((imagesUrl) => GestureDetector(
+                        onTap: () async {
+                          await showDialog(
+                              context: context,
+                              builder: (_) => ImageDialog(imagesUrl.medium));
+                        },
+                        child: Image.network(
+                          imagesUrl.large,
+                          fit: BoxFit.cover,
+                        ),
+                      ))
                   .toList()
                   .cast<Widget>(),
             ),

@@ -7,7 +7,7 @@ class GameDetail {
   final List<String> platforms;
   final List<String> publishers;
   final List<String> similarGames;
-  final List<String> images;
+  final List<ImagesDetail> images;
 
   GameDetail({
     @required this.developers,
@@ -27,7 +27,22 @@ class GameDetail {
       platforms: json['platforms'] != null ? json['platforms'].map((obj) => obj['name']).toList().cast<String>() : [],
       publishers: json['publishers'] != null ? json['publishers'].map((obj) => obj['name']).toList().cast<String>() : [],
       similarGames: json['similar_games'] != null ? json['similar_games'].map((obj) => obj['name']).toList().cast<String>() : [],
-      images: json['images'] != null ? json['images'].map((obj) => obj['medium_url']).toList().cast<String>() : [],
+      images: json['images'] != null ? json['images'].map((obj) => ImagesDetail.fromJson(obj)).toList().cast<ImagesDetail>() : [],
+    );
+  }
+}
+
+class ImagesDetail {
+  final String medium;
+  final String large;
+
+  ImagesDetail({this.medium, this.large});
+
+  factory ImagesDetail.fromJson(Map<String, dynamic> json) {
+    print(json);
+    return ImagesDetail(
+      medium: json['medium_url'],
+      large: json['super_url']
     );
   }
 }
