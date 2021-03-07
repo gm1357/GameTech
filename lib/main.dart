@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gametech/models/gameSummary.dart';
 import 'package:gametech/screens/details_screen.dart';
 import 'package:gametech/screens/filter_screen.dart';
 import 'package:gametech/screens/list_screen.dart';
@@ -10,6 +11,12 @@ Future main() async {
 }
 
 class MyApp extends StatelessWidget {
+  final routes = {
+    '/': (context) => ListScreen(),
+    ListScreen.routeName: (context) => ListScreen(),
+    FilterScreen.routeName: (context) => FilterScreen()
+  };
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,11 +25,20 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.red,
       ),
-      routes: {
-        '/': (context) => ListScreen(),
-        ListScreen.routeName: (context) => ListScreen(),
-        FilterScreen.routeName: (context) => FilterScreen(),
-        DetailsScreen.routeName: (context) => DetailsScreen(),
+      onGenerateRoute: (settings) {
+        if (settings.name == DetailsScreen.routeName) {
+          final GameSummary gameSummary = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return DetailsScreen(gameSummary);
+            },
+          );
+        } else {
+          final Route route = MaterialPageRoute(
+              settings: settings,
+              builder: (context) => routes[settings.name](context));
+          return route;
+        }
       },
     );
   }

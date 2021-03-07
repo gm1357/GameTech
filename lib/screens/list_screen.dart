@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gametech/models/filters.dart';
-import 'package:gametech/models/game.dart';
+import 'package:gametech/models/gameSummary.dart';
 import 'package:gametech/screens/details_screen.dart';
 import 'package:gametech/screens/filter_screen.dart';
 import 'package:http/http.dart' as http;
@@ -16,7 +16,7 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  Future<List<Game>> futureGames;
+  Future<List<GameSummary>> futureGames;
   Filters filters;
 
   @override
@@ -37,7 +37,7 @@ class _ListScreenState extends State<ListScreen> {
       appBar: AppBar(
         title: Text('Games'),
       ),
-      body: FutureBuilder<List<Game>>(
+      body: FutureBuilder<List<GameSummary>>(
         future: futureGames,
         builder: (context, snapshot) {
           if (snapshot.hasData &&
@@ -61,18 +61,18 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
 
-  Future<List<Game>> fetchGames({filters: ''}) async {
+  Future<List<GameSummary>> fetchGames({filters: ''}) async {
     final sort = 'original_release_date:desc';
-    final fields = 'name,deck,image,description';
+    final fields = 'name,deck,image,description,guid';
     final url =
         'https://www.giantbomb.com/api/games/?api_key=${env['API_KEY']}&format=json&sort=$sort&field_list=$fields&filter=$filters';
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
-      List<Game> games = [];
+      List<GameSummary> games = [];
       var results = jsonDecode(response.body)['results'];
       for (var result in results) {
-        games.add(Game.fromJson(result));
+        games.add(GameSummary.fromJson(result));
       }
       return games;
     } else {
@@ -98,7 +98,7 @@ class _ListScreenState extends State<ListScreen> {
 }
 
 class GamesList extends StatelessWidget {
-  final List<Game> games;
+  final List<GameSummary> games;
 
   const GamesList(this.games, {Key key}) : super(key: key);
 
@@ -118,7 +118,7 @@ class GamesList extends StatelessWidget {
 }
 
 class GameTile extends StatelessWidget {
-  final Game game;
+  final GameSummary game;
 
   const GameTile(
     this.game, {
@@ -142,7 +142,7 @@ class GameTile extends StatelessWidget {
                 width: 50,
                 height: 50,
                 child: Image.network(
-                  '${game.imageDetail}',
+                  '${game.cover}',
                   fit: BoxFit.cover,
                 ),
               ),

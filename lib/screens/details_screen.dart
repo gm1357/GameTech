@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:gametech/models/game.dart';
+import 'package:gametech/models/gameDetail.dart';
+import 'package:gametech/models/gameSummary.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DetailsScreen extends StatefulWidget {
   static const routeName = '/details';
+  final GameSummary game;
+
+  DetailsScreen(this.game);
 
   @override
   _DetailsScreenState createState() => _DetailsScreenState();
@@ -14,6 +21,7 @@ class DetailsScreen extends StatefulWidget {
 class _DetailsScreenState extends State<DetailsScreen>
     with SingleTickerProviderStateMixin {
   TabController controller;
+  Future<GameDetail> futureGameDetails;
 
   @override
   void initState() {
@@ -22,14 +30,29 @@ class _DetailsScreenState extends State<DetailsScreen>
       length: 2,
       vsync: this,
     );
+    futureGameDetails = fetchGame(widget.game.guid);
+  }
+
+  Future<GameDetail> fetchGame(String guid) async {
+    final fields =
+        'developers,franchises,genres,platforms,publishers,similar_games,images';
+    final url =
+        'https://www.giantbomb.com/api/game/$guid/?api_key=${env['API_KEY']}&format=json&field_list=$fields';
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var result = jsonDecode(response.body)['results'];
+      return GameDetail.fromJson(result);
+    } else {
+      throw Exception('Failed to load game');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final Game game = ModalRoute.of(context).settings.arguments;
     final _tabs = [
-      GameDescription(game),
-      GameGallery(),
+      GameDescription(widget.game),
+      GameGallery(futureGameDetails),
     ];
 
     return Scaffold(
@@ -43,9 +66,9 @@ class _DetailsScreenState extends State<DetailsScreen>
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Hero(
-                    tag: '${game.name}-cover',
+                    tag: '${widget.game.name}-cover',
                     child: Image.network(
-                      game.imageDetail,
+                      widget.game.cover,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -95,7 +118,7 @@ class _DetailsScreenState extends State<DetailsScreen>
 }
 
 class GameDescription extends StatelessWidget {
-  final Game game;
+  final GameSummary game;
 
   GameDescription(this.game);
 
@@ -123,10 +146,42 @@ class GameDescription extends StatelessWidget {
 }
 
 class GameGallery extends StatelessWidget {
+  final Future<GameDetail> futureGameDetails;
+
+  GameGallery(this.futureGameDetails);
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [Text('teste')],
+    return FutureBuilder(
+      future: futureGameDetails,
+      builder: (context, snapshot) {
+        if (snapshot.hasData &&
+            snapshot.connectionState != ConnectionState.waiting) {
+          return SingleChildScrollView(
+            child: GridView.count(
+              padding: const EdgeInsets.all(20),
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
+              crossAxisCount: 2,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: ScrollPhysics(),
+              children: snapshot.data.images
+                  .map((imageUrl) => Image.network(imageUrl, fit: BoxFit.cover,))
+                  .toList()
+                  .cast<Widget>(),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('${snapshot.error}'),
+          );
+        }
+
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }
