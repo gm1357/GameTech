@@ -1,16 +1,16 @@
 class GameSummary {
-  final String name;
-  final String deck;
-  final String cover;
-  final String description;
-  final String guid;
+  final String? name;
+  final String? deck;
+  final String? cover;
+  final String? description;
+  final String? guid;
 
   GameSummary({
-    this.name,
-    this.deck,
-    this.cover,
-    this.description,
-    this.guid,
+    required this.name,
+    required this.deck,
+    required this.cover,
+    required this.description,
+    required this.guid,
   });
 
   factory GameSummary.fromJson(Map<String, dynamic> json) {

@@ -10,7 +10,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DetailsScreen extends StatefulWidget {
   static const routeName = '/details';
-  final GameSummary game;
+  final GameSummary? game;
 
   DetailsScreen(this.game);
 
@@ -20,8 +20,8 @@ class DetailsScreen extends StatefulWidget {
 
 class _DetailsScreenState extends State<DetailsScreen>
     with SingleTickerProviderStateMixin {
-  TabController controller;
-  Future<GameDetail> futureGameDetails;
+  TabController? controller;
+  Future<GameDetail>? futureGameDetails;
 
   @override
   void initState() {
@@ -30,15 +30,15 @@ class _DetailsScreenState extends State<DetailsScreen>
       length: 2,
       vsync: this,
     );
-    futureGameDetails = fetchGame(widget.game.guid);
+    futureGameDetails = fetchGame(widget.game!.guid);
   }
 
-  Future<GameDetail> fetchGame(String guid) async {
+  Future<GameDetail> fetchGame(String? guid) async {
     final fields =
         'developers,franchises,genres,platforms,publishers,similar_games,images';
     final url =
         'https://www.giantbomb.com/api/game/$guid/?api_key=${env['API_KEY']}&format=json&field_list=$fields';
-    final response = await http.get(url);
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       var result = jsonDecode(response.body)['results'];
@@ -66,9 +66,9 @@ class _DetailsScreenState extends State<DetailsScreen>
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Hero(
-                    tag: '${widget.game.name}-cover',
+                    tag: '${widget.game!.name}-cover',
                     child: Image.network(
-                      widget.game.cover,
+                      widget.game!.cover!,
                       fit: BoxFit.cover,
                     ),
                   ),

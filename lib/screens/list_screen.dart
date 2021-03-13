@@ -16,8 +16,8 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  Future<List<GameSummary>> futureGames;
-  Filters filters;
+  Future<List<GameSummary>>? futureGames;
+  Filters? filters;
 
   @override
   void initState() {
@@ -28,7 +28,7 @@ class _ListScreenState extends State<ListScreen> {
       fromDate: formatter.format(DateTime.now().subtract(Duration(days: 365))),
       toDate: formatter.format(DateTime.now()),
     );
-    futureGames = fetchGames(filters: _getFilterString(this.filters));
+    futureGames = fetchGames(filters: _getFilterString(this.filters!));
   }
 
   @override
@@ -66,7 +66,7 @@ class _ListScreenState extends State<ListScreen> {
     final fields = 'name,deck,image,description,guid';
     final url =
         'https://www.giantbomb.com/api/games/?api_key=${env['API_KEY']}&format=json&sort=$sort&field_list=$fields&filter=$filters';
-    final response = await http.get(url);
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       List<GameSummary> games = [];
@@ -84,15 +84,15 @@ class _ListScreenState extends State<ListScreen> {
     final filters = await Navigator.of(context)
         .pushNamed(FilterScreen.routeName, arguments: this.filters);
     if (filters != null) {
-      this.filters = filters;
+      this.filters = filters as Filters?;
 
       setState(() {
-        futureGames = fetchGames(filters: _getFilterString(filters));
+        futureGames = fetchGames(filters: _getFilterString(filters as Filters));
       });
     }
   }
 
   String _getFilterString(Filters filters) {
-    return 'name:${this.filters.name},original_release_date:${filters.fromDate}|${filters.toDate}';
+    return 'name:${this.filters!.name},original_release_date:${filters.fromDate}|${filters.toDate}';
   }
 }

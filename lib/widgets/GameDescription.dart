@@ -4,7 +4,7 @@ import 'package:gametech/models/gameSummary.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GameDescription extends StatelessWidget {
-  final GameSummary game;
+  final GameSummary? game;
 
   GameDescription(this.game);
 
@@ -12,17 +12,18 @@ class GameDescription extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        game.description != null
+        game!.description != null
             ? Html(
-                data: '${game.description}',
-                onLinkTap: (String relativePath) async =>
-                    await _launchURL('https://www.giantbomb.com$relativePath'))
-            : Text('${game.deck}'),
+                data: '${game!.description}',
+                onLinkTap: (relativePath, context, attributes, element) =>
+                    _launchURL('https://www.giantbomb.com$relativePath'),
+              )
+            : Text('${game!.deck}'),
       ],
     );
   }
 
-  _launchURL(String url) async {
+  void _launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {

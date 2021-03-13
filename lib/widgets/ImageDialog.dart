@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ImageDialog extends StatelessWidget {
-  final String imageUrl;
+  final String? imageUrl;
 
   ImageDialog(this.imageUrl);
 
@@ -15,7 +15,7 @@ class ImageDialog extends StatelessWidget {
           height: MediaQuery.of(context).size.width * 0.9,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: NetworkImage(imageUrl),
+              image: NetworkImage(imageUrl!),
               fit: BoxFit.cover,
             )
           ),

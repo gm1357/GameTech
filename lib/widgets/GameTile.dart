@@ -7,7 +7,7 @@ class GameTile extends StatelessWidget {
 
   const GameTile(
     this.game, {
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

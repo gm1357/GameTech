@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       ),
       onGenerateRoute: (settings) {
         if (settings.name == DetailsScreen.routeName) {
-          final GameSummary gameSummary = settings.arguments;
+          final GameSummary? gameSummary = settings.arguments as GameSummary?;
           return MaterialPageRoute(
             builder: (context) {
               return DetailsScreen(gameSummary);
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         } else {
           final Route route = MaterialPageRoute(
               settings: settings,
-              builder: (context) => routes[settings.name](context));
+              builder: (context) => routes[settings.name!]!(context));
           return route;
         }
       },

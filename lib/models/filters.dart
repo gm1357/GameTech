@@ -4,8 +4,8 @@ class Filters {
   final String toDate;
 
   Filters({
-    this.name,
-    this.fromDate,
-    this.toDate,
+    required this.name,
+    required this.fromDate,
+    required this.toDate,
   });
 }
