@@ -2,7 +2,7 @@ class GameDetail {
   final List<String>? developers;
   final List<String>? franchises;
   final List<String>? genres;
-  final List<String>? platforms;
+  final List<Platform>? platforms;
   final List<String>? publishers;
   final List<String>? similarGames;
   final List<ImagesDetail>? images;
@@ -29,7 +29,10 @@ class GameDetail {
           ? json['genres'].map((obj) => obj['name']).toList().cast<String>()
           : [],
       platforms: json['platforms'] != null
-          ? json['platforms'].map((obj) => obj['name']).toList().cast<String>()
+          ? json['platforms']
+              .map((obj) => Platform.fromJson(obj))
+              .toList()
+              .cast<Platform>()
           : [],
       publishers: json['publishers'] != null
           ? json['publishers'].map((obj) => obj['name']).toList().cast<String>()
@@ -60,6 +63,23 @@ class ImagesDetail {
   });
 
   factory ImagesDetail.fromJson(Map<String, dynamic> json) {
-    return ImagesDetail(medium: json['medium_url'], large: json['super_url']);
+    return ImagesDetail(
+      medium: json['medium_url'],
+      large: json['super_url'],
+    );
+  }
+}
+
+class Platform {
+  final String? name;
+  final String? abbreviation;
+
+  Platform({required this.name, required this.abbreviation});
+
+  factory Platform.fromJson(Map<String, dynamic> json) {
+    return Platform(
+      name: json['name'],
+      abbreviation: json['abbreviation'],
+    );
   }
 }

@@ -51,7 +51,7 @@ class _DetailsScreenState extends State<DetailsScreen>
   @override
   Widget build(BuildContext context) {
     final _tabs = [
-      GameDescription(widget.game),
+      GameDescription(widget.game, futureGameDetails),
       GameGallery(futureGameDetails),
     ];
 
