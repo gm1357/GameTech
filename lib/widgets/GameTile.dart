@@ -46,6 +46,7 @@ class GameTile extends StatelessWidget {
             actions: getActions(context),
           ),
         ),
+        Divider(),
       ],
     );
   }
