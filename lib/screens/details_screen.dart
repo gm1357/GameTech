@@ -11,8 +11,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class DetailsScreen extends StatefulWidget {
   static const routeName = '/details';
   final GameSummary? game;
+  final int tabIndex;
 
-  DetailsScreen(this.game);
+  DetailsScreen(this.game, this.tabIndex);
 
   @override
   _DetailsScreenState createState() => _DetailsScreenState();
@@ -29,6 +30,7 @@ class _DetailsScreenState extends State<DetailsScreen>
     controller = TabController(
       length: 2,
       vsync: this,
+      initialIndex: widget.tabIndex
     );
     futureGameDetails = fetchGame(widget.game!.guid);
   }

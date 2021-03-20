@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gametech/models/detailsArguments.dart';
 import 'package:gametech/models/gameSummary.dart';
 import 'package:gametech/screens/details_screen.dart';
 import 'package:gametech/screens/filter_screen.dart';
@@ -27,10 +28,10 @@ class MyApp extends StatelessWidget {
       ),
       onGenerateRoute: (settings) {
         if (settings.name == DetailsScreen.routeName) {
-          final GameSummary? gameSummary = settings.arguments as GameSummary?;
+          final DetailsArguments? arguments = settings.arguments as DetailsArguments?;
           return MaterialPageRoute(
             builder: (context) {
-              return DetailsScreen(gameSummary);
+              return DetailsScreen(arguments?.game, arguments?.tabIndex ?? 0);
             },
           );
         } else {
