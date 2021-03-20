@@ -27,19 +27,18 @@ class _DetailsScreenState extends State<DetailsScreen>
   @override
   void initState() {
     super.initState();
-    controller = TabController(
-      length: 2,
-      vsync: this,
-      initialIndex: widget.tabIndex
-    );
+    controller =
+        TabController(length: 2, vsync: this, initialIndex: widget.tabIndex);
     futureGameDetails = fetchGame(widget.game!.guid);
   }
 
   Future<GameDetail> fetchGame(String? guid) async {
     final fields =
-        'developers,franchises,genres,platforms,publishers,similar_games,images';
+        'description,developers,franchises,genres,platforms,publishers,similar_games,images';
     final url =
-        'https://www.giantbomb.com/api/game/$guid/?api_key=${env['API_KEY']}&format=json&field_list=$fields';
+        'https://www.giantbomb.com/api/game/$guid/?api_key=${env['API_KEY']}' +
+            '&format=json' +
+            '&field_list=$fields';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

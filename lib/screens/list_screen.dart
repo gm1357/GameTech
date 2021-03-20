@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:gametech/models/filters.dart';
 import 'package:gametech/models/gameSummary.dart';
 import 'package:gametech/screens/filter_screen.dart';
-import 'package:gametech/widgets/GameList.dart';
+import 'package:gametech/widgets/GameTile.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 
 class ListScreen extends StatefulWidget {
@@ -16,8 +17,11 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  Future<List<GameSummary>>? futureGames;
+  static const _pageSize = 20;
+
   Filters? filters;
+  final PagingController<int, GameSummary> _pagingController =
+      PagingController(firstPageKey: 0);
 
   @override
   void initState() {
@@ -28,7 +32,9 @@ class _ListScreenState extends State<ListScreen> {
       fromDate: formatter.format(DateTime.now().subtract(Duration(days: 365))),
       toDate: formatter.format(DateTime.now()),
     );
-    futureGames = fetchGames(filters: _getFilterString(this.filters!));
+    _pagingController.addPageRequestListener((pageKey) {
+      fetchGames(pageKey, filters: _getFilterString(this.filters!));
+    });
   }
 
   @override
@@ -37,22 +43,13 @@ class _ListScreenState extends State<ListScreen> {
       appBar: AppBar(
         title: Text('Games'),
       ),
-      body: FutureBuilder<List<GameSummary>>(
-        future: futureGames,
-        builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.connectionState != ConnectionState.waiting) {
-            return GamesList(snapshot.data);
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('${snapshot.error}'),
-            );
-          }
-
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+      body: PagedListView<int, GameSummary>(
+        pagingController: _pagingController,
+        builderDelegate: PagedChildBuilderDelegate<GameSummary>(
+          itemBuilder: (context, item, index) => GameTile(
+            item,
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: doFilter,
@@ -61,11 +58,22 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
 
-  Future<List<GameSummary>> fetchGames({filters: ''}) async {
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
+  }
+
+  Future<void> fetchGames(int page, {filters: ''}) async {
     final sort = 'original_release_date:desc';
-    final fields = 'name,deck,image,description,guid';
+    final fields = 'name,deck,image,guid';
     final url =
-        'https://www.giantbomb.com/api/games/?api_key=${env['API_KEY']}&format=json&sort=$sort&field_list=$fields&filter=$filters';
+        'https://www.giantbomb.com/api/games/?api_key=${env['API_KEY']}' +
+            '&format=json' +
+            '&sort=$sort' +
+            '&field_list=$fields' +
+            '&filter=$filters' +
+            '&offset=$page';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -74,7 +82,14 @@ class _ListScreenState extends State<ListScreen> {
       for (var result in results) {
         games.add(GameSummary.fromJson(result));
       }
-      return games;
+
+      final isLastPage = games.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(games);
+      } else {
+        final nextPageKey = page + games.length;
+        _pagingController.appendPage(games, nextPageKey);
+      }
     } else {
       throw Exception('Failed to load games');
     }
@@ -85,10 +100,7 @@ class _ListScreenState extends State<ListScreen> {
         .pushNamed(FilterScreen.routeName, arguments: this.filters);
     if (filters != null) {
       this.filters = filters as Filters?;
-
-      setState(() {
-        futureGames = fetchGames(filters: _getFilterString(filters as Filters));
-      });
+      _pagingController.refresh();
     }
   }
 

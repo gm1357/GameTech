@@ -1,4 +1,5 @@
 class GameDetail {
+  final String? description;
   final List<String>? developers;
   final List<String>? franchises;
   final List<String>? genres;
@@ -8,6 +9,7 @@ class GameDetail {
   final List<ImagesDetail>? images;
 
   GameDetail({
+    required this.description,
     required this.developers,
     required this.franchises,
     required this.genres,
@@ -19,6 +21,7 @@ class GameDetail {
 
   factory GameDetail.fromJson(Map<String, dynamic> json) {
     return GameDetail(
+      description: json['description'],
       developers: json['developers'] != null
           ? json['developers'].map((obj) => obj['name']).toList().cast<String>()
           : [],
