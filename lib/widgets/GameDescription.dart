@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:gametech/models/gameDetail.dart';
 import 'package:gametech/models/gameSummary.dart';
+import 'package:gametech/widgets/ImageDialog.dart';
 import 'package:gametech/widgets/PlatformsChips.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -33,8 +35,12 @@ class GameDescription extends StatelessWidget {
               game!.description != null
                   ? Html(
                       data: '${game!.description}',
-                      onLinkTap: (relativePath, context, attributes, element) =>
-                          _launchURL('https://www.giantbomb.com$relativePath'),
+                      onLinkTap: (path, context, attributes, element) {
+                        path = path ?? '';
+                        var url = path.startsWith('http') ? path : 'https://www.giantbomb.com$path';
+                        _launchURL(url);
+                      },
+                      blacklistedElements: ['table']
                     )
                   : Text('${game!.deck}'),
             ],
