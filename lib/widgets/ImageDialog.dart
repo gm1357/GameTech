@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 
 class ImageDialog extends StatelessWidget {
-  final String? imageUrl;
+  final String imageUrl;
 
   ImageDialog(this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: InteractiveViewer(
-        maxScale: 3,
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: MediaQuery.of(context).size.width * 0.9,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(imageUrl!),
-              fit: BoxFit.cover,
-            )
-          ),
+      child: Container(
+        width: 200,
+        height: 200,
+        child: PhotoView(
+          imageProvider: NetworkImage(imageUrl),
+          minScale: 0.5,
+          maxScale: 3.0,
         ),
       ),
     );

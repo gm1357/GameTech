@@ -30,11 +30,15 @@ class GameGallery extends StatelessWidget {
                               await showDialog(
                                   context: context,
                                   builder: (_) =>
-                                      ImageDialog(imagesUrl.medium!));
+                                      ImageDialog(imagesUrl.large!));
                             },
-                            child: Image.network(
-                              imagesUrl.large!,
-                              fit: BoxFit.cover,
+                            child: PhysicalModel(
+                              color: Colors.black,
+                              elevation: 8.0,
+                              child: Image.network(
+                                imagesUrl.large!,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ))
                       .toList()
