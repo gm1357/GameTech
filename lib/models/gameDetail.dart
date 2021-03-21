@@ -1,3 +1,5 @@
+import 'package:gametech/models/platform.dart';
+
 class GameDetail {
   final String? description;
   final List<String>? developers;
@@ -69,20 +71,6 @@ class ImagesDetail {
     return ImagesDetail(
       medium: json['medium_url'],
       large: json['super_url'],
-    );
-  }
-}
-
-class Platform {
-  final String? name;
-  final String? abbreviation;
-
-  Platform({required this.name, required this.abbreviation});
-
-  factory Platform.fromJson(Map<String, dynamic> json) {
-    return Platform(
-      name: json['name'],
-      abbreviation: json['abbreviation'],
     );
   }
 }

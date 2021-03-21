@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gametech/models/gameDetail.dart';
+import 'package:gametech/models/platform.dart';
 
 class PlatformsChips extends StatelessWidget {
   final List<Platform> platforms;

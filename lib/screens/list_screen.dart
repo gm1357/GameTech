@@ -29,6 +29,7 @@ class _ListScreenState extends State<ListScreen> {
     final DateFormat formatter = DateFormat('yyyy-MM-dd');
     this.filters = new Filters(
       name: '',
+      platform: '',
       fromDate: formatter.format(DateTime.now().subtract(Duration(days: 365))),
       toDate: formatter.format(DateTime.now()),
     );
@@ -65,6 +66,7 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Future<void> fetchGames(int page, {filters: ''}) async {
+    print(filters);
     final sort = 'original_release_date:desc';
     final fields = 'name,deck,image,guid';
     final url =
@@ -105,6 +107,16 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   String _getFilterString(Filters filters) {
-    return 'name:${this.filters!.name},original_release_date:${filters.fromDate}|${filters.toDate}';
+    var filters = '';
+    if (this.filters != null) {
+      filters += this.filters!.name != '' ? 'name:${this.filters!.name},' : '';
+      filters += this.filters!.fromDate != ''
+          ? 'original_release_date:${this.filters!.fromDate}|${this.filters!.toDate},'
+          : '';
+      filters += this.filters!.platform != ''
+          ? 'platforms:${this.filters!.platform}'
+          : '';
+    }
+    return filters;
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gametech/models/detailsArguments.dart';
-import 'package:gametech/models/gameSummary.dart';
+import 'package:gametech/models/filters.dart';
 import 'package:gametech/screens/details_screen.dart';
 import 'package:gametech/screens/filter_screen.dart';
 import 'package:gametech/screens/list_screen.dart';
@@ -14,8 +14,7 @@ Future main() async {
 class MyApp extends StatelessWidget {
   final routes = {
     '/': (context) => ListScreen(),
-    ListScreen.routeName: (context) => ListScreen(),
-    FilterScreen.routeName: (context) => FilterScreen()
+    ListScreen.routeName: (context) => ListScreen()
   };
 
   @override
@@ -34,6 +33,14 @@ class MyApp extends StatelessWidget {
               return DetailsScreen(arguments?.game, arguments?.tabIndex ?? 0);
             },
           );
+        } else if (settings.name == FilterScreen.routeName) {
+          final Filters? filters = settings.arguments as Filters;
+          return MaterialPageRoute(
+            builder: (context) {
+              return FilterScreen(filters);
+            },
+          );
+
         } else {
           final Route route = MaterialPageRoute(
               settings: settings,
