@@ -15,7 +15,7 @@ class GameSummary {
     return GameSummary(
       name: json['name'],
       deck: json['deck'],
-      cover: json['image']['small_url'],
+      cover: json['cover'],
       guid: json['guid'],
     );
   }

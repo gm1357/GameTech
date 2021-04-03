@@ -33,16 +33,11 @@ class _DetailsScreenState extends State<DetailsScreen>
   }
 
   Future<GameDetail> fetchGame(String? guid) async {
-    final fields =
-        'description,developers,franchises,genres,platforms,publishers,similar_games,images';
-    final url =
-        'https://www.giantbomb.com/api/game/$guid/?api_key=${env['API_KEY']}' +
-            '&format=json' +
-            '&field_list=$fields';
+    final url = '${env['API_URL']}/public/games/$guid';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      var result = jsonDecode(response.body)['results'];
+      var result = jsonDecode(response.body);
       return GameDetail.fromJson(result);
     } else {
       throw Exception('Failed to load game');
@@ -67,7 +62,7 @@ class _DetailsScreenState extends State<DetailsScreen>
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Hero(
-                    tag: '${widget.game!.name}-cover',
+                    tag: '${widget.game!.guid}-cover',
                     child: Image.network(
                       widget.game!.cover!,
                       fit: BoxFit.cover,

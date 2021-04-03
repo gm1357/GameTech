@@ -31,16 +31,17 @@ class GameDescription extends StatelessWidget {
                 platforms: gameDetail.platforms ?? [],
               ),
               Divider(),
-              gameDetail.description != null
+              gameDetail.description != null && gameDetail.description != ''
                   ? Html(
                       data: '${gameDetail.description}',
                       onLinkTap: (path, context, attributes, element) {
                         path = path ?? '';
-                        var url = path.startsWith('http') ? path : 'https://www.giantbomb.com$path';
+                        var url = path.startsWith('http')
+                            ? path
+                            : 'https://www.giantbomb.com$path';
                         _launchURL(url);
                       },
-                      blacklistedElements: ['table']
-                    )
+                      blacklistedElements: ['table'])
                   : Text('${game!.deck}'),
             ],
           );

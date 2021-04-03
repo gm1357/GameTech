@@ -161,17 +161,13 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Future<List<Platform>> _fetchPlatforms() async {
-    final fields = 'id,abbreviation,name,company';
-    final url =
-        'https://www.giantbomb.com/api/platforms/?api_key=${env['API_KEY']}' +
-            '&field_list=$fields' +
-            '&format=json';
+    final url = '${env['API_URL']}/public/platforms';
 
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       List<Platform> platforms = [];
-      var results = jsonDecode(response.body)['results'];
+      var results = jsonDecode(response.body)['platforms'];
 
       for (var result in results) {
         platforms.add(Platform.fromJson(result));

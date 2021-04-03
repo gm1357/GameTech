@@ -35,7 +35,7 @@ class GameTile extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                tag: '${game.name}-cover',
+                tag: '${game.guid}-cover',
               ),
               onTap: () => Navigator.of(context).pushNamed(
                 DetailsScreen.routeName,

@@ -66,21 +66,16 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Future<void> fetchGames(int page, {filters: ''}) async {
-    print(filters);
     final sort = 'original_release_date:desc';
-    final fields = 'name,deck,image,guid';
-    final url =
-        'https://www.giantbomb.com/api/games/?api_key=${env['API_KEY']}' +
-            '&format=json' +
-            '&sort=$sort' +
-            '&field_list=$fields' +
-            '&filter=$filters' +
-            '&offset=$page';
+    final url = '${env['API_URL']}/public/games/' +
+        '?sort=$sort' +
+        '&filters=$filters' +
+        '&offset=$page';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       List<GameSummary> games = [];
-      var results = jsonDecode(response.body)['results'];
+      var results = jsonDecode(response.body)['games'];
       for (var result in results) {
         games.add(GameSummary.fromJson(result));
       }

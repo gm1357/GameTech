@@ -25,13 +25,13 @@ class GameDetail {
     return GameDetail(
       description: json['description'],
       developers: json['developers'] != null
-          ? json['developers'].map((obj) => obj['name']).toList().cast<String>()
+          ? json['developers'].map((obj) => obj).toList().cast<String>()
           : [],
       franchises: json['franchises'] != null
-          ? json['franchises'].map((obj) => obj['name']).toList().cast<String>()
+          ? json['franchises'].map((obj) => obj).toList().cast<String>()
           : [],
       genres: json['genres'] != null
-          ? json['genres'].map((obj) => obj['name']).toList().cast<String>()
+          ? json['genres'].map((obj) => obj).toList().cast<String>()
           : [],
       platforms: json['platforms'] != null
           ? json['platforms']
@@ -40,7 +40,7 @@ class GameDetail {
               .cast<Platform>()
           : [],
       publishers: json['publishers'] != null
-          ? json['publishers'].map((obj) => obj['name']).toList().cast<String>()
+          ? json['publishers'].map((obj) => obj).toList().cast<String>()
           : [],
       similarGames: json['similar_games'] != null
           ? json['similar_games']
